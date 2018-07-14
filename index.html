@@ -1,11 +1,10 @@
 <link href="styles.css" rel="stylesheet" type="text/css">
 
-<div class="grid">
-</div>
+<div class="grid"></div> <!-- grid container -->
 
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script>
-$(function(){
+$(function() {
 var layout =`
 +------------------------------------------------+
 |                                                |
@@ -77,7 +76,7 @@ boxes.forEach(function(b, i){
       $(`<div>${i+1}</div>`)
       .attr('style', `--row: ${b.row}; --col: ${b.col}; --wid: ${b.wid}; --hgt: ${b.hgt}; --bg-color: ${b.clr};`) // set box grid properties. See styles.css for how it is used.
       .appendTo('.grid');
-})
+});
 
 });
 </script>
