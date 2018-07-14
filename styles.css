@@ -1,0 +1,22 @@
+body{
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-rows: var(--grid-rows);  /* # of grid rows. This will be set by JS */
+  grid-template-columns: var(--grid-cols); /* # of grid columns. This will be set by JS */
+  grid-row-gap: 5px;
+  grid-column-gap: 5px;
+  max-width: 1200px;
+  height: 100vh;
+  margin: 0 auto;
+}
+
+.grid div {
+  grid-area: var(--row) / var(--col) / span var(--hgt) / span var(--wid);  /* Variables for start row, start column, height, and width. Will be set by JS */
+  background-color: var(--bg-color); 
+  text-align: center;
+  line-height: calc(var(--hgt) / var(--nrows) * 100vh); /* for vertically centering the text inside the box. nrows = total # of grid rows */
+  color: #860ef5;
+}

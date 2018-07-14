@@ -1,0 +1,83 @@
+<link href="styles.css" rel="stylesheet" type="text/css">
+
+<div class="grid">
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<script>
+$(function(){
+var layout =`
++------------------------------------------------+
+|                                                |
+|                                                |
++-----+------------------+-----------------+-----+
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
+|     |                  |                 |     |
++-----+------------------+-----------------+-----+
+|                                                |
+|                                                |
++------------------------------------------------+
+`;
+
+var lines = layout.split(/[\r\n]/) // split layout into individual lines
+                  .map(
+                  i=>i.match(/\+/)? // '+' means one or more boxes ending
+                  i.split(/[\+\|]/)
+                  .filter(e=>e)     // filter out zero length lines
+                  .map(
+                              b=>b.match(/^\-+$/)? // all '-'s mean box is ending here
+                              -(b.length+1):       // denote that by -ve number
+                              b.length+1)          // box still open. put +ve length
+                  :i.split(/\|/)              // if '+' not found, then split at '|'
+                  .filter(e=>e)               // filter out zero length lines
+                  .map(b=>b.length+1))        // put box width in the array
+                  .filter(e=>e.length);       // filter out empty arrays
+
+var bgcolors = ["#f7a7a7", "#d0f7a7", "#f7d6a7", "#a7e2f7", "#e7bafb", "#fbbadc", "#def5d1", "#f7f1a7", "#b5fdd6", "#fb9387"]; //put some nice background colors here for our boxes
+var crow = 0;      // current row. not the bird :)
+var boxes = [];    // the array that contains all box definitions
+
+lines.filter(e=>e) // filter out zero length lines
+  .forEach(function(e) {
+  o = e.map((x,i,a) => a.filter((y,j) => j<i).reduce((s,z) => s+Math.abs(z),1)); //get start columns of boxes
+  e.forEach(function(x,i) {
+    var f = boxes.filter(b => b.col===o[i] && b.opn); // are there open boxes at this column offset?
+    if (x>0) {      // +ve number means... 
+      if (f.length) {
+        f.map(b => b.hgt++); // ...add one more row to open boxes at this column offset
+      } else { // no open boxes exist at this column offset. start a new box
+        n = {row: crow, col:o[i], wid:x, hgt: 1, clr: bgcolors[boxes.length%bgcolors.length], opn: true}
+        boxes.push(n);
+      }
+    } else {
+      f.map(b => ++b.hgt && --b.opn); // -ve number means: close open boxes at this column offset
+    }
+  });
+  crow++; // increment current row
+});
+
+var nrows = lines.length-1;                             // total number of rows
+var ncols = lines[0].reduce((s,e) => s+Math.abs(e),0);  // total number of columns
+var rows = `repeat(${nrows}, 1fr)`;
+var cols = `repeat(${ncols}, 1fr)`;
+document.documentElement.style.setProperty('--grid-rows', rows);  // CSS variable for grid-template-rows
+document.documentElement.style.setProperty('--grid-cols', cols);  // CSS variable for grid-template-columns
+document.documentElement.style.setProperty('--nrows', nrows);
+
+boxes.forEach(function(b, i){
+      $(`<div>${i+1}</div>`)
+      .attr('style', `--row: ${b.row}; --col: ${b.col}; --wid: ${b.wid}; --hgt: ${b.hgt}; --bg-color: ${b.clr};`) // set box grid properties. See styles.css for how it is used.
+      .appendTo('.grid');
+})
+
+});
+</script>
